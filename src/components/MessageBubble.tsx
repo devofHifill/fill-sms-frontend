@@ -1,33 +1,24 @@
 "use client";
 
-export default function MessageBubble({
-  message,
-}: {
-  message: { body: string; time: string; direction: string };
-}) {
+export default function MessageBubble({ message }: any) {
   const isOutbound = message.direction === "outbound";
 
   return (
-    <div
-      className={`flex w-full ${
-        isOutbound ? "justify-end" : "justify-start"
-      }`}
-    >
+    <div className={`flex w-full ${isOutbound ? "justify-end" : "justify-start"}`}>
       <div
-        className={`relative max-w-[70%] px-4 py-2 rounded-2xl text-sm leading-snug shadow-sm transition
-          ${
-            isOutbound
-              ? "bg-blue-600 text-white rounded-br-none"
-              : "bg-[#2b2d31] text-neutral-100 rounded-bl-none"
-          }`}
+        className={`
+          relative max-w-[60%] px-3 py-2 rounded-lg text-sm leading-snug shadow 
+          ${isOutbound 
+            ? "bg-[#005C4B] text-[#E9EDEF] rounded-br-none" 
+            : "bg-[#202C33] text-[#E9EDEF] rounded-bl-none"
+          }
+        `}
       >
-        {/* Message text */}
-        <p className="whitespace-pre-wrap break-words">{message.body}</p>
+        <p className="whitespace-pre-wrap">{message.body}</p>
 
-        {/* Timestamp */}
         <span
-          className={`block mt-1 text-[10px] ${
-            isOutbound ? "text-blue-200 text-right" : "text-neutral-400"
+          className={`block mt-1 text-[11px] ${
+            isOutbound ? "text-[#BEE3D2] text-right" : "text-[#8696A0]"
           }`}
         >
           {new Date(message.time).toLocaleTimeString([], {
@@ -36,14 +27,14 @@ export default function MessageBubble({
           })}
         </span>
 
-        {/* Subtle tail for realism */}
+        {/* WhatsApp tail */}
         <div
           className={`absolute bottom-0 ${
             isOutbound
-              ? "right-0 translate-x-[4px] border-l-[8px] border-l-blue-600 border-t-[8px] border-t-transparent"
-              : "left-0 -translate-x-[4px] border-r-[8px] border-r-[#2b2d31] border-t-[8px] border-t-transparent"
+              ? "right-[-4px] border-l-[7px] border-l-[#005C4B] border-t-[7px] border-t-transparent"
+              : "left-[-4px] border-r-[7px] border-r-[#202C33] border-t-[7px] border-t-transparent"
           }`}
-        ></div>
+        />
       </div>
     </div>
   );

@@ -2,7 +2,9 @@
 
 :root { color-scheme: dark; }
 
-html, body { height: 100%; }
+html, body {
+  height: 100dvh;
+}
 
 body {
   /* Unified dark theme */
@@ -23,4 +25,31 @@ a { @apply text-blue-400 hover:underline; }
 /* Hide scrollbars on mobile */
 @media (max-width: 768px) {
   ::-webkit-scrollbar { display: none; }
+}
+
+/* Fade in overlay */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+/* Slide in from left */
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.animate-slideIn {
+  animation: slideIn 0.25s ease-out forwards;
+}
+/* whatapp Backgroung */
+.bg-chat-pattern {
+  background-image: url("https://raw.githubusercontent.com/ahmadbilaldev/whatsapp-web-clone/master/public/chat-bg.png");
+  background-size: cover;
+  background-repeat: repeat;
+  opacity: 0.2;
 }

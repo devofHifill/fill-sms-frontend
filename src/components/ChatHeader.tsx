@@ -9,7 +9,7 @@ export default function ChatHeader({
   name?: string;
 }) {
   return (
-    <div className="h-14 bg-[#1a1b1e] border-b border-neutral-800 flex items-center justify-between px-4">
+    <div className="h-14 shrink-0 bg-[#202C33] border-b border-[#233138] flex items-center justify-between px-4">
       {/* --- Left: contact info --- */}
       <div className="flex flex-col leading-tight">
         <span className="text-sm font-medium text-white">{name}</span>
@@ -28,7 +28,7 @@ export default function ChatHeader({
         <Link
           href="https://play.google.com/"
           target="_blank"
-          className="hover:opacity-80 transition"
+          className="hover:opacity-80 transition hidden sm:block"
         >
           <Image
             src="/google-play-badge.png"

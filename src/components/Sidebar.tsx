@@ -14,7 +14,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="flex flex-col h-full w-80 bg-[#1a1b1e] border-r border-neutral-800">
+<div className="flex flex-col h-full w-80 max-w-full shrink-0 bg-[#1a1b1e] border-r border-neutral-800">
       {/* ---- Top Number Bar ---- */}
       <div className="flex items-center justify-between p-3 border-b border-neutral-800">
         <div className="flex items-center gap-2">
