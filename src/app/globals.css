@@ -1,26 +1,26 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+:root { color-scheme: dark; }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+html, body { height: 100%; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* Unified dark theme */
+  @apply bg-[#121315] text-[#E5E7EB] antialiased;
+}
+
+a { @apply text-blue-400 hover:underline; }
+
+/* Smooth micro-interactions */
+* {
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-thumb { background-color: #3a3a3a; border-radius: 10px; }
+
+/* Hide scrollbars on mobile */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar { display: none; }
 }

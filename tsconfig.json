@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-  ],
+, "src/app/contacts/[id]/page.tsx-bkup"  ],
   "exclude": ["node_modules"]
 }
