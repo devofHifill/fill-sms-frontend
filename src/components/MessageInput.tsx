@@ -1,31 +1,53 @@
 "use client";
 
-import { Paperclip, Smile, Send } from "lucide-react";
 import { useState } from "react";
+import { sendMessage } from "@/lib/api";
 
-export default function MessageInput() {
+export default function MessageInput({ phone, onSent }: { phone: string; onSent: (msg: any) => void }) {
   const [text, setText] = useState("");
+  const [sending, setSending] = useState(false);
+
+  async function handleSend() {
+    if (!text.trim() || sending) return;
+
+    setSending(true);
+
+    try {
+      const body = text.trim();
+
+      await sendMessage(phone, body);
+
+      // Immediately show message in UI
+      onSent({
+        id: Date.now(),
+        body,
+        direction: "outbound",
+        created_at: new Date().toISOString(),
+      });
+
+      setText("");
+    } catch (error) {
+      console.error("Send failed", error);
+    }
+
+    setSending(false);
+  }
 
   return (
-    <div className="flex items-center gap-3 bg-[#2A3942] rounded-xl px-4 py-2 shadow">
-      <button className="text-[#8696A0] hover:text-white transition">
-        <Smile className="w-6 h-6" />
-      </button>
-
+    <div className="p-3 bg-[#202C33] flex items-center gap-3">
       <input
-        type="text"
+        className="flex-1 bg-[#2A3942] text-white p-2 rounded-lg outline-none"
+        placeholder="Type a message..."
         value={text}
         onChange={(e) => setText(e.target.value)}
-        className="flex-1 bg-transparent text-[#E9EDEF] placeholder-[#8696A0] outline-none focus:ring-1 focus:ring-[#005C4B]"
-        placeholder="Type a message"
+        onKeyDown={(e) => e.key === "Enter" && handleSend()}
       />
-
-      <button className="text-[#8696A0] hover:text-white transition">
-        <Paperclip className="w-5 h-5" />
-      </button>
-
-      <button className="bg-[#005C4B] hover:bg-[#046C52] text-white p-2 rounded-full transition">
-        <Send className="w-4 h-4" />
+      <button
+        onClick={handleSend}
+        className="text-white px-4 py-2 rounded-lg bg-[#005C4B] disabled:opacity-40"
+        disabled={sending}
+      >
+        Send
       </button>
     </div>
   );
