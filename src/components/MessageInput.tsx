@@ -16,7 +16,7 @@ export default function MessageInput() {
         type="text"
         value={text}
         onChange={(e) => setText(e.target.value)}
-        className="flex-1 bg-transparent text-[#E9EDEF] placeholder-[#8696A0] outline-none"
+        className="flex-1 bg-transparent text-[#E9EDEF] placeholder-[#8696A0] outline-none focus:ring-1 focus:ring-[#005C4B]"
         placeholder="Type a message"
       />
 

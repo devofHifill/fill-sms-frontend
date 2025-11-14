@@ -13,11 +13,12 @@ export default function Navbar() {
 
         {/* Mobile Menu Button (Left Side) */}
         <button
-          className="md:hidden p-2 rounded hover:bg-[#2b2d31]"
+          className="md:hidden p-2 rounded-lg hover:bg-[#2b2d31] transition"
           onClick={() => setSidebarOpen(true)}
         >
           ☰
         </button>
+
 
         {/* Search Input */}
         <input
@@ -28,8 +29,8 @@ export default function Navbar() {
 
         {/* Right Side Buttons */}
         <div className="flex items-center gap-4 text-sm ml-auto">
-          <button className="hover:text-blue-400">Settings</button>
-          <button className="hover:text-red-400">Logout</button>
+          <button className="hover:text-blue-400 transition">Settings</button>
+          <button className="hover:text-blue-400 transition">Logout</button>
         </div>
       </div>
 

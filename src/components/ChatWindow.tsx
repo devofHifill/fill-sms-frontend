@@ -19,18 +19,20 @@ export default function ChatWindow({ contactId }: ChatWindowProps) {
 
   return (
     <div className="flex flex-col h-full min-h-0 bg-[#111B21]">
+      {/* Header */}
       <ChatHeader name={headerName} />
 
-      <div className="flex-1 min-h-0 overflow-y-auto px-6 py-4 space-y-4 bg-chat-pattern">
+      {/* Scrollable messages area */}
+      <div className="flex-1 overflow-y-auto scroll-smooth px-6 py-4 space-y-4 relative bg-chat-pattern bg-chat-overlay">
         {messages.map((m) => (
           <MessageBubble key={m.id} message={m} />
         ))}
-        <div className="shrink-0 p-4 bg-[#202C33] border-t border-[#233138] pb-[env(safe-area-inset-bottom)]  mt-[150px]">
-          <MessageInput />
-        </div>
       </div>
 
-
+      {/* Fixed bottom Message Input */}
+      <div className="p-4 bg-[#202C33] border-t border-[#233138] shrink-0">
+        <MessageInput />
+      </div>
     </div>
   );
 }

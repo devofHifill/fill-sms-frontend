@@ -49,7 +49,16 @@ a { @apply text-blue-400 hover:underline; }
 /* whatapp Backgroung */
 .bg-chat-pattern {
   background-image: url("https://raw.githubusercontent.com/ahmadbilaldev/whatsapp-web-clone/master/public/chat-bg.png");
-  background-size: cover;
+  background-size: contain;
   background-repeat: repeat;
-  opacity: 0.2;
 }
+
+/* Optional subtle vignette like WhatsApp */
+.bg-chat-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(17, 27, 33, 0.55); /* WhatsApp style dark wash */
+  pointer-events: none;
+}
+

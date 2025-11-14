@@ -14,11 +14,11 @@ export default function ChatHeader({
       <div className="flex flex-col leading-tight">
         <span className="text-sm font-medium text-white">{name}</span>
         <Link
-          href="https://httpsms.com"
+          href="https://fdg.com"
           target="_blank"
           className="text-xs text-blue-400 hover:underline"
         >
-          Powered by httpsms.com
+          Powered by FDG.com
         </Link>
       </div>
 
