@@ -4,20 +4,39 @@ import { useState, useEffect, useRef } from "react";
 import ChatHeader from "@/components/ChatHeader";
 import MessageBubble from "@/components/MessageBubble";
 import MessageInput from "@/components/MessageInput";
+import { fetchMessagesByPhone } from "@/lib/api";
 
 export default function ChatWindow({ phone, messages: initialMessages }: any) {
-  const [messages, setMessages] = useState(initialMessages || []);
+  const [messages, setMessages] = useState<any[]>(initialMessages || []);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  // Scroll to bottom when messages change
+  // Auto-scroll on new messages
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-  
+
+  // Handle outbound messages instantly
   function handleSentMessage(msg: any) {
     setMessages((prev: any[]) => [...prev, msg]);
   }
 
+  // Poll backend every 3 seconds for new inbound messages
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const data = await fetchMessagesByPhone(phone);
+
+        // Avoid duplicates by checking last message id
+        if (data.length !== messages.length) {
+          setMessages(data);
+        }
+      } catch (err) {
+        console.error("Polling error:", err);
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [phone, messages]);
 
   return (
     <div className="flex flex-col h-full min-h-0 bg-[#111B21]">

@@ -4,7 +4,7 @@ export default function Home() {
       <img
         src="/welcome.png"
         alt="Welcome"
-        className="opacity-40 object-contain"
+        className="opacity-80 object-contain"
       />
     </div>
   );
