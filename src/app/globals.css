@@ -2,13 +2,17 @@
 
 :root { color-scheme: dark; }
 
-html, body {
+/* html, body {
   height: 100dvh;
 }
 
 body {
-  /* Unified dark theme */
+  /* Unified dark theme 
   @apply bg-[#121315] text-[#E5E7EB] antialiased;
+} */
+html, body {
+  height: 100%;
+  overflow: hidden;   /* prevent double-scroll bug */
 }
 
 a { @apply text-blue-400 hover:underline; }
@@ -47,18 +51,57 @@ a { @apply text-blue-400 hover:underline; }
   animation: slideIn 0.25s ease-out forwards;
 }
 /* whatapp Backgroung */
-.bg-chat-pattern {
+/* .bg-chat-pattern {
   background-image: url("https://raw.githubusercontent.com/ahmadbilaldev/whatsapp-web-clone/master/public/chat-bg.png");
   background-size: contain;
   background-repeat: repeat;
 }
 
-/* Optional subtle vignette like WhatsApp */
+/* Optional subtle vignette like WhatsApp 
 .bg-chat-overlay::before {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(17, 27, 33, 0.55); /* WhatsApp style dark wash */
+  background: rgba(17, 27, 33, 0.55); /* WhatsApp style dark wash 
   pointer-events: none;
 }
+ */
+/* WhatsApp Background */
+/* --- WhatsApp Chat Background Image --- */
+.bg-chat-pattern {
+  background-image: url("https://raw.githubusercontent.com/ahmadbilaldev/whatsapp-web-clone/master/public/chat-bg.png");
+  background-size: 350px;         /* WhatsApp correct tile size */
+  background-repeat: repeat;
+  background-position: top left;
+}
 
+/* --- WhatsApp Dark Overlay (correct tone) --- */
+.bg-chat-overlay {
+  position: relative;
+}
+
+.bg-chat-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(17, 27, 33, 0.65);   /* WhatsApp ~65% dark wash */
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* WhatsApp scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #374045;
+  border-radius: 20px;
+}
+
+@media (max-width: 768px) {
+  html, body {
+    overflow: hidden;
+    height: 100%;
+  }
+}

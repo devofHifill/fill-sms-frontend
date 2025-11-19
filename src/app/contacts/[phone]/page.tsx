@@ -4,8 +4,12 @@ import * as React from "react";
 import ChatWindow from "@/components/ChatWindow";
 import { fetchMessagesByPhone } from "@/lib/api";
 
-export default function ContactChatPage({ params }: { params: Promise<{ phone: string }> }) {
-  // ✔ Decode dynamic route param in Next.js 16+ (params is a Promise)
+export default function ContactChatPage({
+  params,
+}: {
+  params: Promise<{ phone: string }>;
+}) {
+  // Next.js 16 gives params as a Promise inside client components
   const { phone } = React.use(params);
   const decodedPhone = decodeURIComponent(phone);
 
@@ -24,10 +28,17 @@ export default function ContactChatPage({ params }: { params: Promise<{ phone: s
         setLoading(false);
       }
     }
+
     load();
   }, [decodedPhone]);
 
-  if (loading) return <div className="text-white p-4">Loading messages...</div>;
+  if (loading) {
+    return (
+      <div className="flex h-full items-center justify-center text-[#8696A0]">
+        Loading messages…
+      </div>
+    );
+  }
 
   return <ChatWindow phone={decodedPhone} messages={messages} />;
 }

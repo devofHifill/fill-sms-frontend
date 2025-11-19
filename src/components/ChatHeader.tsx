@@ -1,7 +1,7 @@
 "use client";
+
 import Image from "next/image";
-import Link from "next/link";
-import { MoreVertical } from "lucide-react";
+import { MoreVertical, Search, ArrowLeft } from "lucide-react";
 
 export default function ChatHeader({
   name = "+1 866 517 9619",
@@ -9,40 +9,33 @@ export default function ChatHeader({
   name?: string;
 }) {
   return (
-    <div className="h-14 shrink-0 bg-[#202C33] border-b border-[#233138] flex items-center justify-between px-4">
-      {/* --- Left: contact info --- */}
-      <div className="flex flex-col leading-tight">
-        <span className="text-sm font-medium text-white">{name}</span>
-        <Link
-          href="https://fdg.com"
-          target="_blank"
-          className="text-xs text-blue-400 hover:underline"
-        >
-          Powered by FDG.com
-        </Link>
+    <div className="h-14 bg-[#202C33] border-b border-[#1F2C34] flex items-center justify-between px-4 shadow-[0_1px_0_#1F2C34]">
+
+      {/* Mobile Back Button */}
+      <button
+        className="md:hidden mr-2 text-[#AEBAC1] hover:text-white transition"
+        onClick={() => window.history.back()}
+      >
+        <ArrowLeft className="w-5 h-5" />
+      </button>
+
+      {/* Left Section: Avatar + Name */}
+      <div className="flex items-center gap-3 cursor-pointer select-none">
+        {/* Avatar Placeholder */}
+        <div className="w-10 h-10 rounded-full bg-[#2A3942] flex items-center justify-center text-[#E9EDEF] text-sm font-semibold">
+          {name.replace(/^\+/, "").charAt(0).toUpperCase()}
+        </div>
+
+        <div className="leading-tight">
+          <span className="text-[15px] text-white font-medium">{name}</span>
+          <div className="text-[12px] text-[#8696A0]">Powered by FDG.com</div>
+        </div>
       </div>
 
-      {/* --- Right: icons --- */}
-      <div className="flex items-center gap-3">
-        {/* Google Play icon */}
-        <Link
-          href="https://play.google.com/"
-          target="_blank"
-          className="hover:opacity-80 transition hidden sm:block"
-        >
-          <Image
-            src="/google-play-badge.png"
-            alt="Get it on Google Play"
-            width={100}
-            height={32}
-            priority
-          />
-        </Link>
-
-        {/* Three-dot menu */}
-        <button className="p-2 rounded-full hover:bg-[#2b2d31] transition">
-          <MoreVertical className="w-5 h-5 text-neutral-400" />
-        </button>
+      {/* Right Side Icons */}
+      <div className="flex items-center gap-4 text-[#AEBAC1]">
+        <Search className="w-5 h-5 cursor-pointer hover:text-white transition hidden md:block" />
+        <MoreVertical className="w-5 h-5 cursor-pointer hover:text-white transition" />
       </div>
     </div>
   );

@@ -17,27 +17,37 @@ export default function MessageBubble({
 
   useEffect(() => {
     if (time) {
-      setFormattedTime(new Date(time).toLocaleTimeString());
+      setFormattedTime(
+        new Date(time).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      );
     }
   }, [time]);
 
   return (
     <div
-      className={`flex ${
+      className={`flex mb-1.5 ${
         isOutbound ? "justify-end" : "justify-start"
       }`}
     >
       <div
-        className={`max-w-xs px-3 py-2 rounded-lg text-sm whitespace-pre-wrap ${
-          isOutbound
-            ? "bg-[#005C4B] text-white"
-            : "bg-[#202C33] text-white"
-        }`}
+        className={`
+          max-w-lg px-3.5 py-2.5 rounded-xl text-[15px] leading-relaxed
+          whitespace-pre-wrap shadow-sm relative
+
+          ${isOutbound ? "bg-[#005D4B] text-white" : "bg-[#1F2C34] text-white"}
+
+          ${isOutbound ? "rounded-br-sm" : "rounded-bl-sm"}
+        `}
       >
         {body}
-        <div className="text-[10px] text-gray-300 mt-1 text-right">
+
+        {/* Time */}
+        <span className="text-[11px] text-[#D1D7DB] ml-2 float-right">
           {formattedTime}
-        </div>
+        </span>
       </div>
     </div>
   );

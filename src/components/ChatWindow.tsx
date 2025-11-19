@@ -10,23 +10,22 @@ export default function ChatWindow({ phone, messages: initialMessages }: any) {
   const [messages, setMessages] = useState<any[]>(initialMessages || []);
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll on new messages
+  // Scroll instantly like WhatsApp
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    bottomRef.current?.scrollIntoView({ behavior: "instant" });
   }, [messages]);
 
-  // Handle outbound messages instantly
+  // Add sent message locally
   function handleSentMessage(msg: any) {
-    setMessages((prev: any[]) => [...prev, msg]);
+    setMessages((prev) => [...prev, msg]);
   }
 
-  // Poll backend every 3 seconds for new inbound messages
+  // Poll backend every 3 seconds
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
         const data = await fetchMessagesByPhone(phone);
 
-        // Avoid duplicates by checking last message id
         if (data.length !== messages.length) {
           setMessages(data);
         }
@@ -40,18 +39,26 @@ export default function ChatWindow({ phone, messages: initialMessages }: any) {
 
   return (
     <div className="flex flex-col h-full min-h-0 bg-[#111B21]">
+
       <ChatHeader name={phone} />
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
-        {messages.map((msg: any) => (
-          <MessageBubble
-            key={msg.id}
-            body={msg.body}
-            time={msg.created_at}
-            direction={msg.direction}
-          />
-        ))}
-        <div ref={bottomRef} />
+      {/* WhatsApp Background */}
+      <div className="flex-1 bg-chat-pattern bg-chat-overlay overflow-hidden">
+        <div className="relative z-10 h-full overflow-y-auto overscroll-contain touch-pan-y px-4 py-3 space-y-2">
+
+          {messages.map((msg: any) => (
+            <MessageBubble
+              key={msg.id}
+              body={msg.body}
+              time={msg.created_at}
+              direction={msg.direction}
+            />
+          ))}
+
+          {/* Bottom Gap */}
+          <div className="h-4"></div>
+          <div ref={bottomRef} />
+        </div>
       </div>
 
       <MessageInput phone={phone} onSent={handleSentMessage} />

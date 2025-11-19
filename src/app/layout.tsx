@@ -14,17 +14,19 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="flex h-screen md:h-dvh bg-[#1e1f22] text-white overflow-hidden font-sans">
+      <body className="flex h-screen bg-[#111B21] text-white overflow-hidden font-sans">
 
-        {/* --- Left Sidebar (Desktop Only) --- */}
-        <div className="hidden md:flex h-full">
+        {/* LEFT COLUMN (Sidebar + its top navbar) */}
+        <div className="hidden md:flex flex-col w-72 border-r border-[#1F2C34]">
+          <Navbar />
           <Sidebar />
         </div>
 
-        {/* --- Right Main Area --- */}
-        <div className="flex flex-col flex-1 min-h-0">
-          <Navbar />
-          <main className="flex-1 min-h-0 overflow-hidden">{children}</main>
+        {/* RIGHT COLUMN (Chat Section) */}
+        <div className="flex flex-col flex-1 min-h-0 bg-[#111B21]">
+          <main className="flex-1 min-h-0 overflow-hidden">
+            {children}
+          </main>
         </div>
 
       </body>
