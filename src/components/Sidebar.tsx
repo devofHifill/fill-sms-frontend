@@ -10,14 +10,18 @@ interface Contact {
   id: number;
   name: string | null;
   phone: string;
-  last_message_at: string | null;
-  last_message_body?: string | null;
+  lastMessageAt: string | null;
+  lastMessageBody?: string | null;
+  unreadCount: number;
 }
 
 export default function Sidebar() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const pathname = usePathname();
 
+  // --------------------------------------------
+  // Auto-refresh every 2 sec (WhatsApp-style)
+  // --------------------------------------------
   useEffect(() => {
     async function load() {
       try {
@@ -26,8 +30,8 @@ export default function Sidebar() {
         // Sort by latest message
         const sorted = data.sort(
           (a: any, b: any) =>
-            new Date(b.last_message_at).getTime() -
-            new Date(a.last_message_at).getTime()
+            new Date(b.lastMessageAt).getTime() -
+            new Date(a.lastMessageAt).getTime()
         );
 
         setContacts(sorted);
@@ -35,7 +39,14 @@ export default function Sidebar() {
         console.error("Error loading contacts:", err);
       }
     }
+
+    // First load
     load();
+
+    // Polling
+    const interval = setInterval(load, 2000);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
@@ -49,9 +60,10 @@ export default function Sidebar() {
             <ContactItem
               name={c.name}
               phone={c.phone}
-              lastMessageAt={c.last_message_at}
-              lastMessageBody={c.last_message_body ?? null}
+              lastMessageAt={c.lastMessageAt}
+              lastMessageBody={c.lastMessageBody ?? null}
               isActive={isActive}
+              unreadCount={c.unreadCount} // <-- NEW: unread badge
             />
           </Link>
         );

@@ -1,15 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Check, CheckCheck } from "lucide-react";
 
 export default function MessageBubble({
   body,
   direction,
   time,
+  status,
 }: {
   body: string;
   direction: "inbound" | "outbound";
   time: string;
+  status?: "sent" | "delivered" | "read";
 }) {
   const isOutbound = direction === "outbound";
 
@@ -25,6 +28,30 @@ export default function MessageBubble({
       );
     }
   }, [time]);
+
+  // Hybrid fallback
+  const resolvedStatus =
+    status ||
+    (isOutbound && time ? "delivered" : undefined) ||
+    "sent";
+
+  function renderStatus() {
+    if (!isOutbound) return null;
+
+    if (resolvedStatus === "sent") {
+      return <Check className="w-4 h-4 text-[#AEBAC1] ml-1" />;
+    }
+
+    if (resolvedStatus === "delivered") {
+      return <CheckCheck className="w-4 h-4 text-[#AEBAC1] ml-1" />;
+    }
+
+    if (resolvedStatus === "read") {
+      return <CheckCheck className="w-4 h-4 text-[#53BDEB] ml-1" />;
+    }
+
+    return null;
+  }
 
   return (
     <div
@@ -44,10 +71,10 @@ export default function MessageBubble({
       >
         {body}
 
-        {/* Time */}
-        <span className="text-[11px] text-[#D1D7DB] ml-2 float-right">
-          {formattedTime}
-        </span>
+        <div className="flex items-center justify-end gap-1 mt-1 text-right">
+          <span className="text-[11px] text-[#D1D7DB]">{formattedTime}</span>
+          {renderStatus()}
+        </div>
       </div>
     </div>
   );
