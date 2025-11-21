@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { fetchContacts } from "@/lib/api";
-import ContactItem from "./ContactItem";
+import ContactItem from "./ContactItem";   // ✅ FIX
+
 
 interface Contact {
   id: number;
@@ -19,19 +20,20 @@ export default function Sidebar() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const pathname = usePathname();
 
-  // --------------------------------------------
-  // Auto-refresh every 2 sec (WhatsApp-style)
-  // --------------------------------------------
+  // Helper: safe timestamp for sorting
+  function getTime(value: string | null): number {
+    return value ? new Date(value).getTime() : 0;
+  }
+
   useEffect(() => {
     async function load() {
       try {
         const data = await fetchContacts();
 
-        // Sort by latest message
-        const sorted = data.sort(
-          (a: any, b: any) =>
-            new Date(b.lastMessageAt).getTime() -
-            new Date(a.lastMessageAt).getTime()
+        // Clone + sort safely by lastMessageAt
+        const sorted = [...data].sort(
+          (a: Contact, b: Contact) =>
+            getTime(b.lastMessageAt) - getTime(a.lastMessageAt)
         );
 
         setContacts(sorted);
@@ -43,9 +45,8 @@ export default function Sidebar() {
     // First load
     load();
 
-    // Polling
+    // Polling every 2s
     const interval = setInterval(load, 2000);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -63,7 +64,7 @@ export default function Sidebar() {
               lastMessageAt={c.lastMessageAt}
               lastMessageBody={c.lastMessageBody ?? null}
               isActive={isActive}
-              unreadCount={c.unreadCount} // <-- NEW: unread badge
+              unreadCount={c.unreadCount}
             />
           </Link>
         );

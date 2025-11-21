@@ -41,11 +41,11 @@ export async function fetchMessagesByPhone(phone: string) {
 // ------------------------------------
 // Send Message
 // ------------------------------------
-export async function sendMessage(to: string, body: string) {
+export async function sendMessage(to: string, body: string, name?: string) {
   const res = await fetch(`${BASE_URL}/send-sms`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ to, body }),
+    body: JSON.stringify({ to, body, name }),
   });
 
   if (!res.ok) {
@@ -68,4 +68,22 @@ export async function markMessagesRead(phone: string) {
   }
 
   return res.json();
+}
+// ------------------------------------
+// API to fetch single contact
+// ------------------------------------
+export async function fetchContactByPhone(phone: string) {
+  const res = await fetch(`${BASE_URL}/contacts/${encodeURIComponent(phone)}`);
+
+  if (!res.ok) {
+    console.error("Failed to fetch contact:", res.status);
+    return null;
+  }
+
+  try {
+    return await res.json();
+  } catch (err) {
+    console.error("JSON parse error", err);
+    return null;
+  }
 }

@@ -4,12 +4,21 @@ import { useState } from "react";
 import { sendMessage } from "@/lib/api";
 import { Smile, Paperclip, Mic } from "lucide-react";
 
+// Same Message interface used in ChatWindow
+interface Message {
+  id: number;
+  body: string;
+  direction: "inbound" | "outbound";
+  created_at: string;
+  status?: "sent" | "delivered" | "read";
+}
+
 export default function MessageInput({
   phone,
   onSent,
 }: {
   phone: string;
-  onSent: (msg: any) => void;
+  onSent: (msg: Message) => void;
 }) {
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
@@ -21,14 +30,20 @@ export default function MessageInput({
 
     try {
       const body = text.trim();
+
+      // Backend call to actually send SMS
       await sendMessage(phone, body);
 
-      onSent({
+      // Optimistic UI update
+      const newMessage: Message = {
         id: Date.now(),
         body,
         direction: "outbound",
         created_at: new Date().toISOString(),
-      });
+        status: "sent",
+      };
+
+      onSent(newMessage);
 
       setText("");
     } catch (error) {

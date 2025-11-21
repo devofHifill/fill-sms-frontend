@@ -7,11 +7,33 @@ import MessageInput from "@/components/MessageInput";
 import ContactInfoSidebar from "@/components/ContactInfoSidebar";
 import { fetchMessagesByPhone, markMessagesRead } from "@/lib/api";
 
+// -----------------------------
+// Types
+// -----------------------------
+interface Message {
+  id: number;
+  body: string;
+  direction: "inbound" | "outbound";
+  created_at: string;
+  is_read?: number;
+  status?: "sent" | "delivered" | "read";
+}
+
+interface ChatWindowProps {
+  phone: string;
+  contactName: string | null;
+  messages: Message[];
+}
+
+// -----------------------------
+// Component
+// -----------------------------
 export default function ChatWindow({
   phone,
+  contactName,
   messages: initialMessages,
-}: any) {
-  const [messages, setMessages] = useState<any[]>(initialMessages || []);
+}: ChatWindowProps) {
+  const [messages, setMessages] = useState<Message[]>(initialMessages || []);
   const [typing, setTyping] = useState(false);
   const [online, setOnline] = useState(false);
   const [lastSeenText, setLastSeenText] = useState("");
@@ -19,24 +41,27 @@ export default function ChatWindow({
 
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  // -----------------------------------------
-  // STEP 4: Mark messages as READ when chat opens
-  // -----------------------------------------
+  // -----------------------------
+  // Mark messages as READ
+  // -----------------------------
   useEffect(() => {
     if (!phone) return;
 
-    // Cleaner version using API helper
     markMessagesRead(phone).catch((err) =>
       console.error("❌ Failed to mark messages as read:", err)
     );
   }, [phone]);
 
+  // -----------------------------
   // Auto-scroll to bottom
+  // -----------------------------
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "instant" });
+    bottomRef.current?.scrollIntoView({ behavior: "auto" });
   }, [messages]);
 
-  // Format WhatsApp-style "last seen"
+  // -----------------------------
+  // Format Last Seen
+  // -----------------------------
   function formatLastSeen(date: Date) {
     const now = new Date();
     const diff = now.getTime() - date.getTime();
@@ -56,9 +81,7 @@ export default function ChatWindow({
     }
 
     if (diff < 7 * oneDay) {
-      return `last seen ${date.toLocaleDateString([], {
-        weekday: "long",
-      })}`;
+      return `last seen ${date.toLocaleDateString([], { weekday: "long" })}`;
     }
 
     return `last seen ${date.toLocaleDateString([], {
@@ -67,23 +90,25 @@ export default function ChatWindow({
     })}`;
   }
 
-  // Add outbound message instantly
-  function handleSentMessage(msg: any) {
+  // -----------------------------
+  // Add outbound message
+  // -----------------------------
+  function handleSentMessage(msg: Message) {
     setMessages((prev) => [...prev, msg]);
   }
 
-  // -----------------------------------------
-  // Polling: messages + typing indicator + online status
-  // -----------------------------------------
+  // -----------------------------
+  // Polling (fixed)
+  // -----------------------------
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-        const data = await fetchMessagesByPhone(phone);
+        const data: Message[] = await fetchMessagesByPhone(phone);
 
         const lastLocal = messages[messages.length - 1];
         const lastRemote = data[data.length - 1];
 
-        // ---- Typing Simulation ----
+        // Typing simulation
         if (
           lastRemote &&
           (!lastLocal || lastRemote.id !== lastLocal.id) &&
@@ -93,7 +118,7 @@ export default function ChatWindow({
           setTimeout(() => setTyping(false), 1500);
         }
 
-        // ---- Online / Last Seen ----
+        // Online / last seen
         if (lastRemote && lastRemote.direction === "inbound") {
           const lastTime = new Date(lastRemote.created_at);
           const diffSec =
@@ -107,17 +132,12 @@ export default function ChatWindow({
           }
         }
 
-        // ---- Outbound Message Status ----
-        const updatedMessages = data.map((msg: any) => {
-          if (msg.status) return msg;
-
-          if (msg.direction === "outbound") {
-            if (msg.id) return { ...msg, status: "delivered" };
-            return { ...msg, status: "sent" };
-          }
-
-          return msg;
-        });
+        // Outbound status
+        const updatedMessages = data.map((msg) =>
+          msg.direction === "outbound"
+            ? { ...msg, status: msg.status || "delivered" }
+            : msg
+        );
 
         setMessages(updatedMessages);
       } catch (err) {
@@ -126,26 +146,26 @@ export default function ChatWindow({
     }, 2000);
 
     return () => clearInterval(interval);
-  }, [phone, messages]);
+  }, [phone]); // FIX: removed messages dependency
 
-  // -----------------------------------------
-  // RENDER
-  // -----------------------------------------
+  // -----------------------------
+  // Render UI
+  // -----------------------------
   return (
     <div className="flex flex-col h-full min-h-0 bg-[#111B21]">
-      {/* CHAT HEADER */}
+      {/* HEADER */}
       <ChatHeader
-        name={phone}
+        name={contactName || phone}
         typing={typing}
         online={online}
         lastSeenText={lastSeenText}
         onOpenInfo={() => setInfoOpen(true)}
       />
 
-      {/* CHAT BACKGROUND */}
+      {/* MESSAGES */}
       <div className="flex-1 bg-chat-pattern bg-chat-overlay overflow-hidden">
-        <div className="relative z-10 h-full overflow-y-auto overscroll-contain touch-pan-y px-4 py-3 space-y-2">
-          {messages.map((msg: any) => (
+        <div className="relative z-10 h-full overflow-y-auto px-4 py-3 space-y-2">
+          {messages.map((msg) => (
             <MessageBubble
               key={msg.id}
               body={msg.body}
@@ -160,15 +180,12 @@ export default function ChatWindow({
         </div>
       </div>
 
-      {/* INPUT BAR */}
+      {/* INPUT */}
       <MessageInput phone={phone} onSent={handleSentMessage} />
 
-      {/* CONTACT INFO SIDEBAR */}
+      {/* INFO SIDEBAR */}
       {infoOpen && (
-        <ContactInfoSidebar
-          phone={phone}
-          onClose={() => setInfoOpen(false)}
-        />
+        <ContactInfoSidebar phone={phone} onClose={() => setInfoOpen(false)} />
       )}
     </div>
   );
