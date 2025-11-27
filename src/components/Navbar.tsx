@@ -38,7 +38,7 @@ export default function Navbar() {
         </div>
 
         {/* WhatsApp Search Bar */}
-        <div className="px-3 py-2 hidden md:block">
+        {/* <div className="px-3 py-2 hidden md:block">
           <div className="flex items-center gap-3 bg-[#111B21] rounded-lg px-3 py-2">
             <Search className="w-5 h-5 text-[#8696A0]" />
             <input
@@ -48,7 +48,7 @@ export default function Navbar() {
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Mobile Drawer */}

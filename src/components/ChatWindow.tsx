@@ -6,18 +6,7 @@ import MessageBubble from "@/components/MessageBubble";
 import MessageInput from "@/components/MessageInput";
 import ContactInfoSidebar from "@/components/ContactInfoSidebar";
 import { fetchMessagesByPhone, markMessagesRead } from "@/lib/api";
-
-// -----------------------------
-// Types
-// -----------------------------
-interface Message {
-  id: number;
-  body: string;
-  direction: "inbound" | "outbound";
-  created_at: string;
-  is_read?: number;
-  status?: "sent" | "delivered" | "read";
-}
+import type { Message } from "@/types/Message";
 
 interface ChatWindowProps {
   phone: string;
@@ -25,25 +14,27 @@ interface ChatWindowProps {
   messages: Message[];
 }
 
-// -----------------------------
-// Component
-// -----------------------------
 export default function ChatWindow({
   phone,
   contactName,
   messages: initialMessages,
 }: ChatWindowProps) {
+  console.log("Incoming Name:", contactName);
+
   const [messages, setMessages] = useState<Message[]>(initialMessages || []);
   const [typing, setTyping] = useState(false);
   const [online, setOnline] = useState(false);
   const [lastSeenText, setLastSeenText] = useState("");
   const [infoOpen, setInfoOpen] = useState(false);
 
+  const [displayName, setDisplayName] = useState<string>(contactName || "");
+
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  // -----------------------------
-  // Mark messages as READ
-  // -----------------------------
+  useEffect(() => {
+    setDisplayName(contactName || "");
+  }, [contactName]);
+
   useEffect(() => {
     if (!phone) return;
 
@@ -52,16 +43,10 @@ export default function ChatWindow({
     );
   }, [phone]);
 
-  // -----------------------------
-  // Auto-scroll to bottom
-  // -----------------------------
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "auto" });
   }, [messages]);
 
-  // -----------------------------
-  // Format Last Seen
-  // -----------------------------
   function formatLastSeen(date: Date) {
     const now = new Date();
     const diff = now.getTime() - date.getTime();
@@ -90,16 +75,10 @@ export default function ChatWindow({
     })}`;
   }
 
-  // -----------------------------
-  // Add outbound message
-  // -----------------------------
   function handleSentMessage(msg: Message) {
     setMessages((prev) => [...prev, msg]);
   }
 
-  // -----------------------------
-  // Polling (fixed)
-  // -----------------------------
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
@@ -108,7 +87,6 @@ export default function ChatWindow({
         const lastLocal = messages[messages.length - 1];
         const lastRemote = data[data.length - 1];
 
-        // Typing simulation
         if (
           lastRemote &&
           (!lastLocal || lastRemote.id !== lastLocal.id) &&
@@ -118,7 +96,6 @@ export default function ChatWindow({
           setTimeout(() => setTyping(false), 1500);
         }
 
-        // Online / last seen
         if (lastRemote && lastRemote.direction === "inbound") {
           const lastTime = new Date(lastRemote.created_at);
           const diffSec =
@@ -132,7 +109,6 @@ export default function ChatWindow({
           }
         }
 
-        // Outbound status
         const updatedMessages = data.map((msg) =>
           msg.direction === "outbound"
             ? { ...msg, status: msg.status || "delivered" }
@@ -146,23 +122,20 @@ export default function ChatWindow({
     }, 2000);
 
     return () => clearInterval(interval);
-  }, [phone]); // FIX: removed messages dependency
+  }, [phone]);
 
-  // -----------------------------
-  // Render UI
-  // -----------------------------
+  const headerName = displayName || phone;
+
   return (
     <div className="flex flex-col h-full min-h-0 bg-[#111B21]">
-      {/* HEADER */}
       <ChatHeader
-        name={contactName || phone}
+        name={headerName}
         typing={typing}
         online={online}
         lastSeenText={lastSeenText}
         onOpenInfo={() => setInfoOpen(true)}
       />
 
-      {/* MESSAGES */}
       <div className="flex-1 bg-chat-pattern bg-chat-overlay overflow-hidden">
         <div className="relative z-10 h-full overflow-y-auto px-4 py-3 space-y-2">
           {messages.map((msg) => (
@@ -180,12 +153,15 @@ export default function ChatWindow({
         </div>
       </div>
 
-      {/* INPUT */}
       <MessageInput phone={phone} onSent={handleSentMessage} />
 
-      {/* INFO SIDEBAR */}
       {infoOpen && (
-        <ContactInfoSidebar phone={phone} onClose={() => setInfoOpen(false)} />
+        <ContactInfoSidebar
+          phone={phone}
+          name={displayName}
+          onClose={() => setInfoOpen(false)}
+          onNameUpdated={(newName) => setDisplayName(newName || "")}
+        />
       )}
     </div>
   );

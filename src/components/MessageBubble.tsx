@@ -11,7 +11,7 @@ export default function MessageBubble({
   body: string;
   direction: "inbound" | "outbound";
   time: string;
-  status?: "sent" | "delivered" | "read";
+  status?: string;   // ✅ FIXED
 }) {
   const isOutbound = direction === "outbound";
 
